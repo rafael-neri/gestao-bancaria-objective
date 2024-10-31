@@ -1,0 +1,40 @@
+services:
+  php:
+    build:
+      context: ./.docker
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mariadb
+    networks:
+      - app-net
+
+  mariadb:
+    image: mariadb:11
+    env_file:
+      - .env
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    environment:
+      MARIADB_TCP_PORT: '${DB_PORT}'
+      MARIADB_DATABASE: '${DB_NAME}'
+      MARIADB_USER: '${DB_USER}'
+      MARIADB_PASSWORD: '${DB_PASS}'
+      MARIADB_ROOT_PASSWORD: '${DB_PASS}'
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  mariadb-data:
+    driver: local

@@ -1,0 +1,14 @@
+{
+    "name": "objective/gestao-bancaria",
+    "autoload": {
+        "psr-4": {
+            "Objective\\GestaoBancaria\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rafael Neri"
+        }
+    ],
+    "require": {}
+}
