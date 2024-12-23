@@ -1,7 +1,7 @@
 services:
   php:
     build:
-      context: ./.docker
+      context: ./docker
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -21,11 +21,11 @@ services:
     ports:
       - '${DB_PORT}:${DB_PORT}'
     environment:
-      MARIADB_TCP_PORT: '${DB_PORT}'
-      MARIADB_DATABASE: '${DB_NAME}'
-      MARIADB_USER: '${DB_USER}'
-      MARIADB_PASSWORD: '${DB_PASS}'
-      MARIADB_ROOT_PASSWORD: '${DB_PASS}'
+      MYSQL_TCP_PORT: '${DB_PORT}'
+      MYSQL_DATABASE: '${DB_NAME}'
+      MYSQL_USER: '${DB_USER}'
+      MYSQL_PASSWORD: '${DB_PASS}'
+      MYSQL_ROOT_PASSWORD: '${DB_PASS}'
     volumes:
       - mariadb-data:/var/lib/mysql
     networks:

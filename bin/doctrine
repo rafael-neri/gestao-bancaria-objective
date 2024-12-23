@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Tools\Console\Command;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Symfony\Component\Console\Application;
+
+$app = require_once __DIR__ . '/../config/bootstrap.php';
+$container = $app->getContainer();
+$entityManager = $container->get(EntityManager::class);
+
+$migrationsConfig = new ConfigurationArray($container->get('settings')['doctrine']['migrations']);
+$entityManagerLoader = new ExistingEntityManager($entityManager);
+$dependencyFactory = DependencyFactory::fromEntityManager($migrationsConfig, $entityManagerLoader);
+
+
+// Cria a aplicação de console
+$cli = new Application('Doctrine Command Line Interface');
+$cli->setCatchExceptions(true);
+
+// Adiciona os comandos padrão do Doctrine ORM
+ConsoleRunner::addCommands($cli, new SingleManagerProvider($entityManager));
+
+// Adiciona os comandos de migration ao CLI
+$cli->addCommands([
+    new Command\DumpSchemaCommand($dependencyFactory),
+    new Command\ExecuteCommand($dependencyFactory),
+    new Command\GenerateCommand($dependencyFactory),
+    new Command\LatestCommand($dependencyFactory),
+    new Command\MigrateCommand($dependencyFactory),
+    new Command\RollupCommand($dependencyFactory),
+    new Command\StatusCommand($dependencyFactory),
+    new Command\UpToDateCommand($dependencyFactory),
+    new Command\VersionCommand($dependencyFactory),
+]);
+
+$cli->run();
